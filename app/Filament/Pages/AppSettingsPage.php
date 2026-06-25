@@ -10,6 +10,8 @@ use App\Enums\NotificationMethods;
 use App\Filament\Actions\Notifications\TestAppriseAction;
 use App\Filament\Actions\Notifications\TestDiscordAction;
 use App\Filament\Actions\Notifications\TestGotifyAction;
+use App\Filament\Actions\Notifications\TestMailAction;
+use App\Filament\Actions\Notifications\TestPushoverAction;
 use App\Filament\Actions\Notifications\TestTelegramAction;
 use App\Filament\Traits\FormHelperTrait;
 use App\Models\UrlResearch;
@@ -312,7 +314,10 @@ class AppSettingsPage extends SettingsPage
                 TextInput::make('from_address')
                     ->required()
                     ->label('From address')
-                    ->hintIcon(Icons::Help->value, 'The email address to send emails from'),
+                    ->hintIcon(Icons::Help->value, 'The email address to send emails from')
+                    ->suffixAction(
+                        TestMailAction::make(),
+                    ),
                 Select::make('encryption')
                     ->label('Encryption')
                     ->placeholder('None')
@@ -337,7 +342,10 @@ class AppSettingsPage extends SettingsPage
                 TextInput::make('token')
                     ->label('Pushover token')
                     ->hint(new HtmlString('<a href="https://pushover.net/apps/build" target="_blank">Create an application</a>'))
-                    ->required(),
+                    ->required()
+                    ->suffixAction(
+                        TestPushoverAction::make(),
+                    ),
             ],
             __('Push notifications via Pushover'),
             flat: true

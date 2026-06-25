@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\Role;
+use App\Models\User;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -62,14 +64,20 @@ class InitDatabase extends Command
             $pass = env('APP_USER_PASSWORD');
             if ($email && $pass) {
                 $this->line('Creating new user with email: '.$email.' and password: '.$pass);
-                $this->components->task('Creating the default user', fn () => $this
-                    ->callSilent('make:filament-user', [
+                $this->components->task('Creating the default user', function () use ($email, $pass) {
+                    $this->callSilent('make:filament-user', [
                         // @phpstan-ignore-next-line
                         '--name' => env('APP_USER_NAME', 'Admin'),
                         '--email' => $email,
                         '--password' => $pass,
-                    ])
-                );
+                    ]);
+
+                    // make:filament-user has no role flag, so promote the new user to
+                    // admin here — otherwise the admin settings page is inaccessible.
+                    User::query()
+                        ->where('email', $email)
+                        ->update(['role' => Role::Admin]);
+                });
             }
         }
 

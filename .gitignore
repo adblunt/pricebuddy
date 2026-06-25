@@ -14,6 +14,7 @@
 /docs/node_modules
 /docs/public/node_modules
 /vendor
+/composer.phar
 
 # Build
 npm-debug.log
